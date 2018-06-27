@@ -21,14 +21,14 @@ gcloud container clusters create $CLUSTER_NAME --num-nodes=3;
 gcloud container clusters get-credentials $CLUSTER_NAME;
 ```
 
-Setup namespaces:
+Create namespace:
 ```sh
 kubectl create namespace production
 ```
 
 ### 2. Build and push image
 
-Setup the environment variables:
+Setup environment variables:
 
 ```sh
 export PROJECT_ID=$(gcloud info --format='value(config.project)');
@@ -44,13 +44,13 @@ gcloud docker -- push gcr.io/$PROJECT_ID/app:$VERSION_NUMBER;
 
 ### 3. Deploy production
 
-Set values from environment in manifests:
+Set values from environment in manifest:
 
 ```sh
 sed -i.bak "s/PROJECT_ID/$PROJECT_ID/; s/VERSION_NUMBER/$VERSION_NUMBER/;" k8s/app-production.yml;
 ```
 
-Enter following:
+Create deployment:
 
 ```sh
 kubectl --namespace=production apply -f app-production.yml
@@ -73,13 +73,13 @@ curl http://$SERVICE_IP/
 
 ### 4. Deploy canary
 
-Set values from environment in manifests:
+Set values from environment in manifest:
 
 ```sh
 sed -i.bak "s/PROJECT_ID/$PROJECT_ID/; s/VERSION_NUMBER/$VERSION_NUMBER/;" k8s/app-canary.yml;
 ```
 
-Enter following:
+Create deployment:
 
 ```sh
 kubectl --namespace=production apply -f app-canary.yml
