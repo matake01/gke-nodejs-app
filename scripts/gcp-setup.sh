@@ -1,9 +1,3 @@
-export CLUSTER_NAME=$1;
-export COMPUTE_ZONE=$2;
-export NAMESPACE=$3
-
-export PROJECT_ID=$(gcloud info --format='value(config.project)');
-
 gcloud config set project $PROJECT_ID;
 gcloud config set compute/zone $COMPUTE_ZONE;
 
