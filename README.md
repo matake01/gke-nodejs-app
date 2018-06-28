@@ -89,7 +89,7 @@ export SERVICE_IP=$(kubectl --namespace=production get ingress/app-ingress --out
 curl http://$SERVICE_IP/
 ```
 
-### 4. Deploy canary
+### 4. Build and deploy canary
 
 Set version number:
 
