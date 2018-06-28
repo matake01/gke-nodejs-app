@@ -115,9 +115,9 @@ curl http://canary.foo.bar/version
 ### 5. Troubleshooting
 
 ```sh
-kubectl --namespace=production get services;
-kubectl --namespace=production get pods -o wide;
-kubectl --namespace=production get events -w;
+kubectl --namespace=... get services;
+kubectl --namespace=... get pods -o wide;
+kubectl --namespace=... get events -w;
 ```
 
 ## Cleanup
@@ -126,6 +126,7 @@ Delete the service:
 
 ```sh
 kubectl --namespace=production delete service kubeapp-production-service
+kubectl --namespace=production delete service kubeapp-canary-service
 ```
 
 Wait for the Load Balancer provisioned for the app service to be deleted:
