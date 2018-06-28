@@ -19,7 +19,6 @@ spec:
           httpGet:
             path: /health
             port: 8080
-        command: ["/app"]
         ports:
         - name: kubeapp
           containerPort: 8080

@@ -13,13 +13,12 @@ spec:
     spec:
       containers:
       - name: kubeapp
-        image: gcr.io/PROJECT_ID/app:VERSION_NUMBER
+        image: gcr.io/mysql-migration/app:1.0.0
         imagePullPolicy: Always
         readinessProbe:
           httpGet:
             path: /health
             port: 8080
-        command: ["/app"]
         ports:
         - name: kubeapp
           containerPort: 8080

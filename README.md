@@ -53,7 +53,7 @@ sed -i.bak "s/PROJECT_ID/$PROJECT_ID/; s/VERSION_NUMBER/$VERSION_NUMBER/;" k8s/a
 Create deployment:
 
 ```sh
-kubectl --namespace=production apply -f app-production.yml
+kubectl --namespace=production apply -f k8s/app-production.yml
 ```
 
 For troubleshooting:
@@ -65,7 +65,7 @@ kubectl --namespace=production rollout status deployment/kubeapp-production
 Create the ingress:
 
 ```sh
-kubectl --namespace=production apply -f app-ingress-production.yml
+kubectl --namespace=production apply -f k8s/app-ingress-production.yml
 kubectl --namespace=production describe ingress
 export SERVICE_IP=$(kubectl --namespace=production get ingress/app-ingress --output=json | jq -r '.status.loadBalancer.ingress[0].ip')
 curl http://$SERVICE_IP/
@@ -82,7 +82,7 @@ sed -i.bak "s/PROJECT_ID/$PROJECT_ID/; s/VERSION_NUMBER/$VERSION_NUMBER/;" k8s/a
 Create deployment:
 
 ```sh
-kubectl --namespace=production apply -f app-canary.yml
+kubectl --namespace=production apply -f k8s/app-canary.yml
 ```
 
 For troubleshooting:
@@ -94,7 +94,7 @@ kubectl --namespace=production rollout status deployment/kubeapp-canary
 Create the ingress:
 
 ```sh
-kubectl --namespace=production apply -f app-ingress-canary.yml
+kubectl --namespace=production apply -f k8s/app-ingress-canary.yml
 kubectl --namespace=production describe ingress
 ```
 
@@ -125,7 +125,7 @@ kubectl --namespace=production get events -w;
 Delete the service:
 
 ```sh
-kubectl delete service app
+kubectl --namespace=production delete service kubeapp-production-service
 ```
 
 Wait for the Load Balancer provisioned for the app service to be deleted:
