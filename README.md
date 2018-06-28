@@ -14,7 +14,7 @@ Open the file `./scripts/set-env.sh` and set the correct values for your environ
 ```
 
 ```sh
-./scripts/gcp-setup.sh;
+./scripts/gke-setup.sh;
 ```
 
 ```sh
@@ -29,7 +29,7 @@ export VERSION_NUMBER=2.0
 ```
 
 ```sh
-./scripts/gcp-cleanup.sh;
+./scripts/gke-cleanup.sh;
 ```
 
 ## The hard way
@@ -56,43 +56,31 @@ Create namespace:
 kubectl create namespace production
 ```
 
-### 2. Build and push image
+### 2. Build and deploy production
 
-Setup environment variables:
+Set version number:
+
+```sh
+export VERSION_NUMBER=1.0;
+```
+
+Build and push images to GCP:
 
 ```sh
 export PROJECT_ID=$(gcloud info --format='value(config.project)');
-export VERSION_NUMBER=1.0.0;
-```
-
-Build the image:
-
-```sh
 docker build -t gcr.io/$PROJECT_ID/app:$VERSION_NUMBER .;
 gcloud docker -- push gcr.io/$PROJECT_ID/app:$VERSION_NUMBER;
 ```
 
-### 3. Deploy production
-
-Set values from environment in manifest:
+Deploy to GKE:
 
 ```sh
 sed -i.bak "s/PROJECT_ID/$PROJECT_ID/; s/VERSION_NUMBER/$VERSION_NUMBER/;" k8s/app-production.yml;
-```
-
-Create deployment:
-
-```sh
 kubectl --namespace=production apply -f k8s/app-production.yml
-```
-
-For troubleshooting:
-
-```sh
 kubectl --namespace=production rollout status deployment/kubeapp-production
 ```
 
-Create the ingress:
+Make externally accessible:
 
 ```sh
 kubectl --namespace=production apply -f k8s/app-ingress-production.yml
@@ -103,21 +91,25 @@ curl http://$SERVICE_IP/
 
 ### 4. Deploy canary
 
-Set values from environment in manifest:
+Set version number:
+
+```sh
+export VERSION_NUMBER=2.0;
+```
+
+Build and push images to GCP:
+
+```sh
+export PROJECT_ID=$(gcloud info --format='value(config.project)');
+docker build -t gcr.io/$PROJECT_ID/app:$VERSION_NUMBER .;
+gcloud docker -- push gcr.io/$PROJECT_ID/app:$VERSION_NUMBER;
+```
+
+Deploy to GKE:
 
 ```sh
 sed -i.bak "s/PROJECT_ID/$PROJECT_ID/; s/VERSION_NUMBER/$VERSION_NUMBER/;" k8s/app-canary.yml;
-```
-
-Create deployment:
-
-```sh
 kubectl --namespace=production apply -f k8s/app-canary.yml
-```
-
-For troubleshooting:
-
-```sh
 kubectl --namespace=production rollout status deployment/kubeapp-canary
 ```
 
@@ -126,23 +118,19 @@ Create the ingress:
 ```sh
 kubectl --namespace=production apply -f k8s/app-ingress-canary.yml
 kubectl --namespace=production describe ingress
-```
-
-Set resolver to point to Ingress resource IP:
-
-```sh
 export INGRESS_IP=$(kubectl --namespace=production get ing/app-ingress --output=json | jq -r '.status.loadBalancer.ingress[0].ip')
 echo "$INGRESS_IP foo.bar canary.foo.bar" | sudo tee -a /etc/hosts
 ```
 
-Test HTTP access:
+
+### 5. Test HTTP Access
 
 ```sh
 curl http://foo.bar/version
 curl http://canary.foo.bar/version
 ```
 
-### 5. Troubleshooting
+### 6. Troubleshooting
 
 ```sh
 kubectl --namespace=... get services;
@@ -150,7 +138,7 @@ kubectl --namespace=... get pods -o wide;
 kubectl --namespace=... get events -w;
 ```
 
-### 6. Cleanup
+### 7. Cleanup
 
 Delete the service:
 
