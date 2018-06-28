@@ -2,9 +2,39 @@
 
 This project illustrates how to build and deploy a simple app to the Google Kubernetes Engine and with support for canary deployments.
 
-## Getting started
 
-### 1. Setup GCP and Kubernetes
+## Quickstart
+
+### Setup the environment
+
+Open the file `./scripts/set-env.sh` and set the correct values for your environment.
+
+```sh
+./scripts/set-env.sh;
+```
+
+```sh
+./scripts/gcp-setup.sh;
+```
+
+```sh
+./scripts/build-and-push-image.sh;
+./scripts/deploy-version-production.sh;
+```
+
+```sh
+export VERSION_NUMBER=2.0
+./scripts/build-and-push-image.sh;
+./scripts/deploy-version-canary.sh;
+```
+
+```sh
+./scripts/gcp-cleanup.sh;
+```
+
+## The hard way
+
+### 1. Setup GCP/Kubernetes
 
 Setup the project:
 
@@ -120,7 +150,7 @@ kubectl --namespace=... get pods -o wide;
 kubectl --namespace=... get events -w;
 ```
 
-## Cleanup
+### 6. Cleanup
 
 Delete the service:
 
